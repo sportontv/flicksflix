@@ -577,6 +577,68 @@
             border-color: white;
             transform: scale(1.1);
         }
+
+        @media (max-width: 768px) {
+            /* Adjust profile modal for smaller screens */
+            .profile-modal {
+                width: 90%;
+                max-width: 400px;
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                height: 90vh; /* Take up most of the viewport */
+                box-sizing: border-box;
+            }
+
+            /* Restrict avatar gallery to a scrollable area */
+            .avatar-selection {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+                max-height: 50%; /* Restrict height to leave space for input and buttons */
+                overflow-y: auto; /* Enable vertical scrolling */
+                padding: 10px;
+                border: 1px solid #333; /* Optional: Add a border to distinguish this area */
+            }
+
+            /* Make avatars more compact */
+            .avatar-option {
+                width: 60px;
+                height: 60px;
+            }
+
+            /* Ensure text box and buttons are visible */
+            .profile-modal input,
+            .profile-modal button {
+                margin: 10px 0;
+                width: 100%;
+            }
+
+            /* Sticky title for the avatar gallery */
+            .avatar-title {
+                position: sticky;
+                top: 0;
+                background: rgba(0, 0, 0, 0.8);
+                padding: 10px;
+                width: 100%;
+                text-align: center;
+                z-index: 10;
+            }
+
+            /* Adjust profile container on smaller screens */
+            .profiles-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            /* Slightly reduce avatar size on "Who's Watching" screen */
+            .profile-avatar {
+                width: 100px;
+                height: 100px;
+            }
+        }
     </style>
 </head>
 <body>
