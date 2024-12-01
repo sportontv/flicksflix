@@ -1288,8 +1288,16 @@
             if (modal) {
                 modal.style.display = 'block';
                 document.body.style.overflow = 'hidden';
-                modal.offsetHeight;
+                modal.offsetHeight; // Force reflow
                 modal.classList.add('active');
+
+                // Sync the "Add to List" button in this modal
+                const addToListBtn = modal.querySelector('.add-to-list-btn');
+                if (addToListBtn) {
+                    const isAdded = myList.includes(movieId);
+                    addToListBtn.classList.toggle('added', isAdded);
+                    updateButtonText(addToListBtn, isAdded);
+                }
             }
         }
 
@@ -1495,37 +1503,71 @@
             currentProfile = profile;
             localStorage.setItem('lastProfile', JSON.stringify(profile));
             document.getElementById('profilesOverlay').style.display = 'none';
-            
-            // Update My List for the selected profile
+
+            // Sync the list for the selected profile
             myList.length = 0;
             myList.push(...(profile.myList || []));
             updateMyListSection();
+
+            // Ensure all buttons reflect the selected profile's list
+            syncAddToListButtons();
+        }
+
+        function syncAddToListButtons() {
+            const allAddButtons = document.querySelectorAll('.add-to-list-btn');
+
+            allAddButtons.forEach(button => {
+                const movieCard = button.closest('[data-movie-id]');
+                if (movieCard) {
+                    const movieId = parseInt(movieCard.dataset.movieId, 10);
+                    const isAdded = myList.includes(movieId);
+
+                    button.classList.toggle('added', isAdded);
+                    updateButtonText(button, isAdded);
+                }
+            });
         }
 
         // Modify the toggleMyList function to work with profiles
         function toggleMyList(movieId) {
-            if (!currentProfile) return;
-            
+            if (!currentProfile) return; // Ensure a profile is selected
+
             const index = myList.indexOf(movieId);
             const btn = document.querySelector(`#movieModal${movieId} .add-to-list-btn`);
             
             if (index === -1) {
+                // Add to list
                 myList.push(movieId);
                 btn.classList.add('added');
             } else {
+                // Remove from list
                 myList.splice(index, 1);
                 btn.classList.remove('added');
             }
-            
+
+            // Update button text
+            updateButtonText(btn, index === -1);
+
             // Update the current profile's list in localStorage
-            const profiles = JSON.parse(localStorage.getItem('profiles'));
+            const profiles = JSON.parse(localStorage.getItem('profiles')) || [];
             const profileIndex = profiles.findIndex(p => p.id === currentProfile.id);
             if (profileIndex !== -1) {
                 profiles[profileIndex].myList = myList;
                 localStorage.setItem('profiles', JSON.stringify(profiles));
             }
-            
+
             updateMyListSection();
+        }
+
+        // Helper function to update button text based on the current state
+        function updateButtonText(button, isAdded) {
+            if (isAdded) {
+                button.querySelector('.add-text').style.display = 'none';
+                button.querySelector('.remove-text').style.display = 'inline';
+            } else {
+                button.querySelector('.add-text').style.display = 'inline';
+                button.querySelector('.remove-text').style.display = 'none';
+            }
         }
 
         // Initialize profiles when the page loads
@@ -1627,11 +1669,16 @@
             profiles.forEach(profile => {
                 const profileElement = container.querySelector(`[data-profile-id="${profile.id}"]`);
                 if (profileElement) {
+                    // Remove any existing delete buttons to prevent duplicates
+                    const existingDeleteBtn = profileElement.querySelector('.delete-profile-btn');
+                    if (existingDeleteBtn) existingDeleteBtn.remove();
+
+                    // Add a new delete button
                     const deleteBtn = document.createElement('button');
                     deleteBtn.className = 'delete-profile-btn';
                     deleteBtn.textContent = 'Delete';
 
-                    // Prevent selecting profile when clicking delete
+                    // Prevent selecting the profile when clicking delete
                     deleteBtn.onclick = (event) => {
                         event.stopPropagation();
                         deleteProfile(profile.id);
@@ -1645,6 +1692,15 @@
         function disableProfileEditing() {
             const deleteButtons = document.querySelectorAll('.delete-profile-btn');
             deleteButtons.forEach(btn => btn.remove());
+
+            // Reattach profile selection handlers
+            const profiles = JSON.parse(localStorage.getItem('profiles')) || [];
+            profiles.forEach(profile => {
+                const profileElement = document.querySelector(`[data-profile-id="${profile.id}"]`);
+                if (profileElement) {
+                    profileElement.onclick = () => selectProfile(profile);
+                }
+            });
         }
 
         function deleteProfile(profileId) {
@@ -1667,13 +1723,22 @@
                 const profileElement = document.createElement('div');
                 profileElement.className = 'profile';
                 profileElement.setAttribute('data-profile-id', profile.id);
+
+                // Attach profile selection only if not editing
                 profileElement.onclick = !isEditingProfiles ? () => selectProfile(profile) : null;
+
                 profileElement.innerHTML = `
                     <img class="profile-avatar" src="${profile.avatar}" alt="${profile.name}">
                     <span class="profile-name">${profile.name}</span>
                 `;
                 container.appendChild(profileElement);
             });
+
+            // Add the "Add Profile" button back
+            container.appendChild(addProfileBtn);
+
+            // Re-enable edit mode if active
+            if (isEditingProfiles) enableProfileEditing();
 
             // Add the "Add Profile" button back
             container.appendChild(addProfileBtn);
