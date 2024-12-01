@@ -376,6 +376,23 @@
             margin-left: 10px;
             transition: all 0.3s;
         }
+
+        .add-to-list-btn .remove-text {
+            display: none;
+        }
+
+        .add-to-list-btn.added .add-text {
+            display: none;
+        }
+
+        .add-to-list-btn.added .remove-text {
+            display: inline;
+        }
+
+        .add-to-list-btn.added {
+            background-color: white;
+            color: black;
+        }
     </style>
 </head>
 <body>
@@ -531,7 +548,7 @@
                         <span>2024</span>
                         <span>1h 35m</span>
                         <span>Animation</span>
-                        <button class="add-to-list-btn" onclick="toggleMyList(movieId)">
+                        <button class="add-to-list-btn" onclick="toggleMyList(1)">
                             <span class="add-text">+ My List</span>
                             <span class="remove-text">✓ Added</span>
                         </button>
@@ -571,7 +588,7 @@
                         <span>3h 14m</span>
                         <span>Romantic</span>
                         <span>13+ (PG-13)</span>
-                        <button class="add-to-list-btn" onclick="toggleMyList(movieId)">
+                        <button class="add-to-list-btn" onclick="toggleMyList(2)">
                             <span class="add-text">+ My List</span>
                             <span class="remove-text">✓ Added</span>
                         </button>
@@ -611,7 +628,7 @@
                         <span>2006</span>
                         <span>1h 57m</span>
                         <span>Animation</span>
-                        <button class="add-to-list-btn" onclick="toggleMyList(movieId)">
+                        <button class="add-to-list-btn" onclick="toggleMyList(3)">
                             <span class="add-text">+ My List</span>
                             <span class="remove-text">✓ Added</span>
                         </button>
@@ -650,7 +667,7 @@
                         <span>2007</span>
                         <span>1h 51m</span>
                         <span>Animation</span>
-                        <button class="add-to-list-btn" onclick="toggleMyList(movieId)">
+                        <button class="add-to-list-btn" onclick="toggleMyList(4)">
                             <span class="add-text">+ My List</span>
                             <span class="remove-text">✓ Added</span>
                         </button>
@@ -689,7 +706,7 @@
                         <span>2012</span>
                         <span>1h 47m</span>
                         <span>Comedy</span>
-                        <button class="add-to-list-btn" onclick="toggleMyList(movieId)">
+                        <button class="add-to-list-btn" onclick="toggleMyList(5)">
                             <span class="add-text">+ My List</span>
                             <span class="remove-text">✓ Added</span>
                         </button>
@@ -728,7 +745,7 @@
                         <span>2018</span>
                         <span>1h 44m</span>
                         <span>Adventure</span>
-                        <button class="add-to-list-btn" onclick="toggleMyList(movieId)">
+                        <button class="add-to-list-btn" onclick="toggleMyList(6)">
                             <span class="add-text">+ My List</span>
                             <span class="remove-text">✓ Added</span>
                         </button>
@@ -767,7 +784,7 @@
                         <span>1990</span>
                         <span>1h 43m</span>
                         <span>Comedy</span>
-                        <button class="add-to-list-btn" onclick="toggleMyList(movieId)">
+                        <button class="add-to-list-btn" onclick="toggleMyList(7)">
                             <span class="add-text">+ My List</span>
                             <span class="remove-text">✓ Added</span>
                         </button>
@@ -806,7 +823,7 @@
                             <span>2005</span>
                             <span style="border: 1px solid white; padding: 1px 3px; border-radius: 4px; color: white;">TV-Y7</span>
                             <span>Animation</span>
-                            <button class="add-to-list-btn" onclick="toggleMyList(movieId)">
+                            <button class="add-to-list-btn" onclick="toggleMyList(8)">
                                 <span class="add-text">+ My List</span>
                                 <span class="remove-text">✓ Added</span>
                             </button>
@@ -846,7 +863,7 @@
                         <span>1998</span>
                         <span>1h 43m</span>
                         <span>Comedy</span>
-                        <button class="add-to-list-btn" onclick="toggleMyList(movieId)">
+                        <button class="add-to-list-btn" onclick="toggleMyList(9)">
                             <span class="add-text">+ My List</span>
                             <span class="remove-text">✓ Added</span>
                         </button>
@@ -886,7 +903,7 @@
                             <span>1993</span>
                             <span>1h 16m</span>
                             <span>Fantasy</span>
-                            <button class="add-to-list-btn" onclick="toggleMyList(movieId)">
+                            <button class="add-to-list-btn" onclick="toggleMyList(12)">
                                 <span class="add-text">+ My List</span>
                                 <span class="remove-text">✓ Added</span>
                             </button>
@@ -926,7 +943,7 @@
                             <span>2015</span>
                             <span>1h 35m</span>
                             <span>Animation</span>
-                            <button class="add-to-list-btn" onclick="toggleMyList(movieId)">
+                            <button class="add-to-list-btn" onclick="toggleMyList(13)">
                                 <span class="add-text">+ My List</span>
                                 <span class="remove-text">✓ Added</span>
                             </button>
