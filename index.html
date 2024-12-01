@@ -394,9 +394,213 @@
             background-color: white;
             color: black;
         }
+
+        .profiles-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #141414;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .profiles-title {
+            font-size: 3.5vw;
+            color: #fff;
+            margin-bottom: 30px;
+        }
+
+        .profiles-container {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 80%;
+        }
+
+        .profile {
+            cursor: pointer;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.3s ease;
+            margin: 10px;
+        }
+
+        .profile:hover {
+            transform: scale(1.1);
+        }
+
+        .profile-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            border: 3px solid transparent;
+        }
+
+        .profile:hover .profile-avatar {
+            border-color: #fff;
+        }
+
+        .profile-name {
+            color: grey;
+            font-size: 1.2em;
+            text-align: center;
+        }
+
+        .profile:hover .profile-name {
+            color: #fff;
+        }
+
+        .add-profile-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .add-profile-icon {
+            width: 150px;
+            height: 150px;
+            border-radius: 4px;
+            background: #141414;
+            border: 1px solid grey;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5em;
+            color: grey;
+            margin-bottom: 10px;
+        }
+
+        .add-profile-btn:hover .add-profile-icon {
+            border-color: #fff;
+            color: #fff;
+        }
+
+        .add-profile-btn:hover .profile-name {
+            color: #fff;
+        }
+
+        /* Profile Creation Modal */
+        .profile-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.85);
+            padding: 30px;
+            border-radius: 4px;
+            z-index: 2001;
+            display: none;
+        }
+
+        .profile-modal input {
+            padding: 10px;
+            margin: 10px 0;
+            width: 100%;
+            background: #333;
+            border: none;
+            color: #fff;
+        }
+
+        .profile-modal button {
+            padding: 10px 20px;
+            margin: 10px 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .profile-modal button.save {
+            background: #e50914;
+            color: #fff;
+        }
+
+        .profile-modal button.cancel {
+            background: transparent;
+            border: 1px solid #fff;
+            color: #fff;
+        }
+
+        .edit-profiles-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #e50914;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .edit-profiles-btn:hover {
+            background-color: #f40612;
+        }
+
+        .avatar-selection {
+            display: flex;
+            flex-direction: column; /* Stack title above gallery */
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .avatar-title {
+            font-size: 1.2em;
+            color: white;
+            margin-bottom: 10px; /* Space between title and avatars */
+            text-align: center;
+        }
+
+        .avatar-option {
+            width: 80px; /* Adjust size as needed */
+            height: 80px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .avatar-option:hover {
+            border-color: white;
+            transform: scale(1.1);
+        }
     </style>
 </head>
 <body>
+    <div class="profiles-overlay" id="profilesOverlay">
+        <h1 class="profiles-title">Who's Watching?</h1>
+        <button id="editProfilesBtn" class="edit-profiles-btn" onclick="toggleEditProfiles()">Edit Profiles</button>
+        <div class="profiles-container" id="profilesContainer">
+            <!-- Profiles will be added dynamically here -->
+            <div class="add-profile-btn" onclick="showProfileModal()">
+                <div class="add-profile-icon">+</div>
+                <span class="profile-name">Add Profile</span>
+            </div>
+        </div>
+    </div>    
+    
+    <div class="profile-modal" id="profileModal">
+        <h2>Create Profile</h2>
+        <input type="text" id="profileName" placeholder="Name">
+        <div class="avatar-selection">
+            <h3 class="avatar-title">Choose Avatar</h3>
+            <div id="avatarGallery"></div>
+        </div>
+        <button class="save" onclick="createProfile()">Save</button>
+        <button class="cancel" onclick="hideProfileModal()">Cancel</button>
+    </div>    
+    
     <header>
         <nav>
             <a href="index.html" class="logo">FlicksFlix</a>
@@ -1254,6 +1458,267 @@
                 if (btn) btn.classList.add('added');
             });
         });
+
+        // Profile Management
+        let currentProfile = null;
+
+        function initializeProfiles() {
+            // Get profiles from localStorage or default to an empty array
+            let profiles = JSON.parse(localStorage.getItem('profiles')) || [];
+
+            // Remove lastProfile from localStorage
+            localStorage.removeItem('lastProfile');
+
+            if (profiles.length === 0) {
+                // If no profiles exist, show the overlay
+                document.getElementById('profilesOverlay').style.display = 'flex';
+            } else {
+                // Display the profiles (e.g., console log or render on screen)
+                console.log(profiles);
+            }
+
+            updateProfilesDisplay();
+        }
+
+        function updateProfilesDisplay() {
+            const profiles = JSON.parse(localStorage.getItem('profiles')) || [];
+            const container = document.getElementById('profilesContainer');
+            const addProfileBtn = container.querySelector('.add-profile-btn');
+            
+            // Clear existing profiles
+            container.innerHTML = '';
+            
+            // Add profiles
+            profiles.forEach(profile => {
+                const profileElement = document.createElement('div');
+                profileElement.className = 'profile';
+                profileElement.onclick = () => selectProfile(profile);
+                profileElement.innerHTML = `
+                    <img class="profile-avatar" src="${profile.avatar}" alt="${profile.name}">
+                    <span class="profile-name">${profile.name}</span>
+                `;
+                container.appendChild(profileElement);
+            });
+            
+            // Add the "Add Profile" button back
+            container.appendChild(addProfileBtn);
+        }
+
+        function showProfileModal() {
+            document.getElementById('profileModal').style.display = 'block';
+        }
+
+        function hideProfileModal() {
+            document.getElementById('profileModal').style.display = 'none';
+            document.getElementById('profileName').value = '';
+        }
+
+        function createProfile() {
+            const name = document.getElementById('profileName').value.trim();
+            if (name) {
+                const profiles = JSON.parse(localStorage.getItem('profiles')) || [];
+                const newProfile = {
+                    id: Date.now(),
+                    name: name,
+                    myList: []
+                };
+                profiles.push(newProfile);
+                localStorage.setItem('profiles', JSON.stringify(profiles));
+                hideProfileModal();
+                updateProfilesDisplay();
+            }
+        }
+
+        function selectProfile(profile) {
+            currentProfile = profile;
+            localStorage.setItem('lastProfile', JSON.stringify(profile));
+            document.getElementById('profilesOverlay').style.display = 'none';
+            
+            // Update My List for the selected profile
+            myList.length = 0;
+            myList.push(...(profile.myList || []));
+            updateMyListSection();
+        }
+
+        // Modify the toggleMyList function to work with profiles
+        function toggleMyList(movieId) {
+            if (!currentProfile) return;
+            
+            const index = myList.indexOf(movieId);
+            const btn = document.querySelector(`#movieModal${movieId} .add-to-list-btn`);
+            
+            if (index === -1) {
+                myList.push(movieId);
+                btn.classList.add('added');
+            } else {
+                myList.splice(index, 1);
+                btn.classList.remove('added');
+            }
+            
+            // Update the current profile's list in localStorage
+            const profiles = JSON.parse(localStorage.getItem('profiles'));
+            const profileIndex = profiles.findIndex(p => p.id === currentProfile.id);
+            if (profileIndex !== -1) {
+                profiles[profileIndex].myList = myList;
+                localStorage.setItem('profiles', JSON.stringify(profiles));
+            }
+            
+            updateMyListSection();
+        }
+
+        // Initialize profiles when the page loads
+        document.addEventListener('DOMContentLoaded', initializeProfiles);
+
+        // List of avatar image URLs hosted on your server
+        const avatarImages = [
+            'https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/EA2AE1BF47B714DEB1B9E050450AB5CF76FF3A7397D69F6B235DAB265123A071/scale?width=300&aspectRatio=1.00&format=png',
+            'https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/2D1BACACD140222501ACB2F3F85A9E13A20469CD1E3EA4ACE2461851D15E888D/scale?width=300&aspectRatio=1.00&format=png',
+            'https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/7AF80638BF5375882B663D6B7613A431D7E5513ECE97A6BB6512F6FD22EC69B4/scale?width=300&aspectRatio=1.00&format=png',
+            'https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/830A63659C4DBEB64FE705A5BEB57823D0F883E321EEC787852D1B59C512013A/scale?width=300&aspectRatio=1.00&format=png',
+            'https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/CD05FF92A733E897568A4DF2C05D279892E1F9D19082F3BB55DE277E5A4BDC0E/scale?width=300&aspectRatio=1.00&format=png',
+            'https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/F73277B06EE997988A5DD3356F145DB4A0D9C82A7656796DB20B93B2D0DC7C79/scale?width=300&aspectRatio=1.00&format=png',
+            'https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/751640804A7E00D762A3C4C9AEE66FB07C53178ACD62703964526177DC1E31FA/scale?width=300&aspectRatio=1.00&format=png',
+            'https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/035666D95D62EEAAE70D11B1C5A1B84AAF97297C022F04C7F6399E4A55A2D068/scale?width=300&aspectRatio=1.00&format=png',
+            'https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/0B1CBFF3F397FF5A8CA180BE6404FFBBF42C5C8408176330CC8AAF43FAB40A0C/scale?width=300&aspectRatio=1.00&format=png',
+            'https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/4A993C424D26F3A4910ADA5551330DE74BED8F6D790363C9E06E0E9B7957D89C/scale?width=300&aspectRatio=1.00&format=png',
+            'https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/C13051D2045FE177C84AE90DE864E20B24E2D9BAA02C425153D9269364562FF2/scale?width=300&aspectRatio=1.00&format=png',
+            'https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/52821BBD6A36902BC6152E2F16A64DFF5AB6759844E06E6A3E4E2DFA59A3C9DE/scale?width=300&aspectRatio=1.00&format=png',
+            'https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/9117E672F6814F42E026235154D3E438A05573222E559F161C14B89ED3A4F65B/scale?width=300&aspectRatio=1.00&format=png',
+            'https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/FE49954B252C628EC809C68832E9137D5926C2085D58A6510F8BBA12933F7B7E/scale?width=300&aspectRatio=1.00&format=png',
+            'https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/E86A0B41FAD9D1E71117EA587A8A3CCE2F90CAEE497C4D589C8D72D9D9EB440A/scale?width=300&aspectRatio=1.00&format=png',
+            'https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/317859BB86DDB612979FF08CAE39011C7BE7A64D7D7ECB952489546AAA239194/scale?width=300&aspectRatio=1.00&format=png',
+            'https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/A70AE42D2F721B8E2F293C57E4BC934607D3DD1305DC4EC4B19D48163C9B68BB/scale?width=300&aspectRatio=1.00&format=png',
+            'https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/0E815741CEFA1CCBBCDFB5546DEC85092537C823100CDED57442D2A5649D263F/scale?width=300&aspectRatio=1.00&format=png',
+            'https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/EA9705B1B18DDFC8DB720708A00151A38351F8459D2F0A0DAB5C9B081F79AEC1/scale?width=300&aspectRatio=1.00&format=png',
+            'https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/BD2FA0F3965617FC515E3CEBD3AD51C00CCFFBF98F96448EFE46B82867FCE542/scale?width=300&aspectRatio=1.00&format=png',
+            'https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/9B9BD428EFE9C3EA7DE723534401B0BD8BD2743647C39839F33F11D1DE0AD2A5/scale?width=300&aspectRatio=1.00&format=png',
+            'https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/58A1E29AEE806CE56D4FB7E902435DD6303E562F23A7F8944DF37F51FF4BC020/scale?width=300&aspectRatio=1.00&format=png',
+            'https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/ACE4F4BFED3DB6029C69C846D1572C3620FF908F0B7AFA387FF22EE65BC53C2E/scale?width=300&aspectRatio=1.00&format=png',
+            'https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/9ED384B20C3A89FC2ED445FD89DFE0A8B7354381D670C8E18F619AF33902F712/scale?width=300&aspectRatio=1.00&format=png',
+            'https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/2A53CC399D20855B67CD7CD3518B3E83C13AD9575340E4178B12CE68ED5BF218/scale?width=300&aspectRatio=1.00&format=png',
+            'https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/6552F370F58E97EFE932B2A8386B441DDE3E5ED179B248C5BA45528B6278E297/scale?width=300&aspectRatio=1.00&format=png'
+        ];
+
+        let selectedAvatar = null;
+
+        function showProfileModal() {
+            const modal = document.getElementById('profileModal');
+            const avatarGallery = document.getElementById('avatarGallery');
+            
+            // Generate avatar selection gallery
+            avatarGallery.innerHTML = avatarImages.map(imgUrl => `
+                <img src="${imgUrl}" class="avatar-option" 
+                    onclick="selectAvatar('${imgUrl}')">
+            `).join('');
+            
+            modal.style.display = 'block';
+        }
+
+        function selectAvatar(avatar) {
+            selectedAvatar = avatar;
+            // Highlight the selected avatar
+            document.querySelectorAll('.avatar-option').forEach(img => {
+                img.style.border = img.src === avatar ? '3px solid white' : 'none';
+            });
+        }
+
+        function createProfile() {
+            const name = document.getElementById('profileName').value.trim();
+            if (name && selectedAvatar) {
+                const profiles = JSON.parse(localStorage.getItem('profiles')) || [];
+                const newProfile = {
+                    id: Date.now(),
+                    name: name,
+                    avatar: selectedAvatar,
+                    myList: []
+                };
+                profiles.push(newProfile);
+                localStorage.setItem('profiles', JSON.stringify(profiles));
+                hideProfileModal();
+                updateProfilesDisplay();
+            } else {
+                alert('Please enter a name and select an avatar.');
+            }
+        }
+
+        //Edit Profiles
+
+        let isEditingProfiles = false;
+
+        function toggleEditProfiles() {
+            const editBtn = document.getElementById('editProfilesBtn');
+            isEditingProfiles = !isEditingProfiles;
+
+            if (isEditingProfiles) {
+                editBtn.textContent = 'Done';
+                enableProfileEditing();
+            } else {
+                editBtn.textContent = 'Edit Profiles';
+                disableProfileEditing();
+            }
+        }
+
+        function enableProfileEditing() {
+            const profiles = JSON.parse(localStorage.getItem('profiles')) || [];
+            const container = document.getElementById('profilesContainer');
+
+            profiles.forEach(profile => {
+                const profileElement = container.querySelector(`[data-profile-id="${profile.id}"]`);
+                if (profileElement) {
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'delete-profile-btn';
+                    deleteBtn.textContent = 'Delete';
+
+                    // Prevent selecting profile when clicking delete
+                    deleteBtn.onclick = (event) => {
+                        event.stopPropagation();
+                        deleteProfile(profile.id);
+                    };
+
+                    profileElement.appendChild(deleteBtn);
+                }
+            });
+        }
+
+        function disableProfileEditing() {
+            const deleteButtons = document.querySelectorAll('.delete-profile-btn');
+            deleteButtons.forEach(btn => btn.remove());
+        }
+
+        function deleteProfile(profileId) {
+            let profiles = JSON.parse(localStorage.getItem('profiles')) || [];
+            profiles = profiles.filter(profile => profile.id !== profileId);
+            localStorage.setItem('profiles', JSON.stringify(profiles));
+            updateProfilesDisplay();
+        }
+
+        function updateProfilesDisplay() {
+            const profiles = JSON.parse(localStorage.getItem('profiles')) || [];
+            const container = document.getElementById('profilesContainer');
+            const addProfileBtn = container.querySelector('.add-profile-btn');
+            
+            // Clear existing profiles
+            container.innerHTML = '';
+
+            // Add profiles
+            profiles.forEach(profile => {
+                const profileElement = document.createElement('div');
+                profileElement.className = 'profile';
+                profileElement.setAttribute('data-profile-id', profile.id);
+                profileElement.onclick = !isEditingProfiles ? () => selectProfile(profile) : null;
+                profileElement.innerHTML = `
+                    <img class="profile-avatar" src="${profile.avatar}" alt="${profile.name}">
+                    <span class="profile-name">${profile.name}</span>
+                `;
+                container.appendChild(profileElement);
+            });
+
+            // Add the "Add Profile" button back
+            container.appendChild(addProfileBtn);
+
+            // Re-enable edit mode if active
+            if (isEditingProfiles) enableProfileEditing();
+        }
     </script>
 </body>
 </html>
