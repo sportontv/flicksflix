@@ -365,6 +365,17 @@
             font-size: 12px;
             margin-top: 20px;
         }
+
+        .add-to-list-btn {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 2px solid white;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: all 0.3s;
+        }
     </style>
 </head>
 <body>
@@ -374,7 +385,9 @@
             <div class="nav-links">
                 <a href="disney.html">Disney Originals</a>
                 <a href="#coming" style="margin-left: 20px;">Coming Soon</a>
-                <a href="contact.html" style="margin-left: 20px;">Contact us or request a movie</a>
+                <a href="#my-list" style="margin-left: 20px;">My List</a>
+                <a href="contact.html" style="margin-left: 20px;">Contact us</a>
+                <p style="margin-left: 20px;">A "My List" feature is currently being developed. While it is under developement we we cannot assure that it will work as expected.</p>
             </div>
         </nav>
     </header>
@@ -384,6 +397,17 @@
         <div class="featured-content">
             <img src="https://image.tmdb.org/t/p/original/iBtfiGQXX1p52i2jzsYixKxZEyF.png" style="width: 400px; margin-bottom: 30px;">
             <a href="homealone.html" class="watch-button">Watch Now</a>
+        </div>
+    </section>
+
+    <section class="movie-section" id="my-list">
+        <h2>My List</h2>
+        <div class="movie-row-container">
+            <button class="scroll-button prev hidden">❮</button>
+            <div class="movie-row" id="my-list-row">
+                <!-- Movies will be added here dynamically -->
+            </div>
+            <button class="scroll-button next">❯</button>
         </div>
     </section>
 
@@ -507,6 +531,10 @@
                         <span>2024</span>
                         <span>1h 35m</span>
                         <span>Animation</span>
+                        <button class="add-to-list-btn" onclick="toggleMyList(movieId)">
+                            <span class="add-text">+ My List</span>
+                            <span class="remove-text">✓ Added</span>
+                        </button>
                     </div>
                     <a href="inside-out-2.html" class="watch-now-btn">Watch Now</a>
                 </div>
@@ -543,6 +571,10 @@
                         <span>3h 14m</span>
                         <span>Romantic</span>
                         <span>13+ (PG-13)</span>
+                        <button class="add-to-list-btn" onclick="toggleMyList(movieId)">
+                            <span class="add-text">+ My List</span>
+                            <span class="remove-text">✓ Added</span>
+                        </button>
                     </div>
                     <a href="titanic.html" class="watch-now-btn">Watch Now</a>
                     <a href="https://youtu.be/oHY7D7K58BM" class="watch-now-btn">Trailer</a>
@@ -579,6 +611,10 @@
                         <span>2006</span>
                         <span>1h 57m</span>
                         <span>Animation</span>
+                        <button class="add-to-list-btn" onclick="toggleMyList(movieId)">
+                            <span class="add-text">+ My List</span>
+                            <span class="remove-text">✓ Added</span>
+                        </button>
                     </div>
                     <a href="cars.html" class="watch-now-btn">Watch Now</a>
                 </div>
@@ -614,6 +650,10 @@
                         <span>2007</span>
                         <span>1h 51m</span>
                         <span>Animation</span>
+                        <button class="add-to-list-btn" onclick="toggleMyList(movieId)">
+                            <span class="add-text">+ My List</span>
+                            <span class="remove-text">✓ Added</span>
+                        </button>
                     </div>
                     <a href="ratatouille.html" class="watch-now-btn">Watch Now</a>
                 </div>
@@ -649,6 +689,10 @@
                         <span>2012</span>
                         <span>1h 47m</span>
                         <span>Comedy</span>
+                        <button class="add-to-list-btn" onclick="toggleMyList(movieId)">
+                            <span class="add-text">+ My List</span>
+                            <span class="remove-text">✓ Added</span>
+                        </button>
                     </div>
                     <a href="ted.html" class="watch-now-btn">Watch Now</a>
                 </div>
@@ -684,6 +728,10 @@
                         <span>2018</span>
                         <span>1h 44m</span>
                         <span>Adventure</span>
+                        <button class="add-to-list-btn" onclick="toggleMyList(movieId)">
+                            <span class="add-text">+ My List</span>
+                            <span class="remove-text">✓ Added</span>
+                        </button>
                     </div>
                     <a href="the-christmas-chronicles.html" class="watch-now-btn">Watch Now</a>
                 </div>
@@ -719,6 +767,10 @@
                         <span>1990</span>
                         <span>1h 43m</span>
                         <span>Comedy</span>
+                        <button class="add-to-list-btn" onclick="toggleMyList(movieId)">
+                            <span class="add-text">+ My List</span>
+                            <span class="remove-text">✓ Added</span>
+                        </button>
                     </div>
                     <a href="home-alone.html" class="watch-now-btn">Watch Now</a>
                 </div>
@@ -754,6 +806,10 @@
                             <span>2005</span>
                             <span style="border: 1px solid white; padding: 1px 3px; border-radius: 4px; color: white;">TV-Y7</span>
                             <span>Animation</span>
+                            <button class="add-to-list-btn" onclick="toggleMyList(movieId)">
+                                <span class="add-text">+ My List</span>
+                                <span class="remove-text">✓ Added</span>
+                            </button>
                         </div>
                         <a href="avatar.html" class="watch-now-btn">Watch Now</a>
                         <a href="https://youtu.be/IyZ0xetSb9s" class="watch-now-btn">Trailer</a>
@@ -790,6 +846,10 @@
                         <span>1998</span>
                         <span>1h 43m</span>
                         <span>Comedy</span>
+                        <button class="add-to-list-btn" onclick="toggleMyList(movieId)">
+                            <span class="add-text">+ My List</span>
+                            <span class="remove-text">✓ Added</span>
+                        </button>
                     </div>
                     <a href="the-truman-show.html" class="watch-now-btn">Watch Now</a>
                     <a href="https://youtu.be/loTIzXAS7v4" class="watch-now-btn">Trailer</a>
@@ -826,6 +886,10 @@
                             <span>1993</span>
                             <span>1h 16m</span>
                             <span>Fantasy</span>
+                            <button class="add-to-list-btn" onclick="toggleMyList(movieId)">
+                                <span class="add-text">+ My List</span>
+                                <span class="remove-text">✓ Added</span>
+                            </button>
                         </div>
                         <a href="the-nightmare-before-christmas.html" class="watch-now-btn">Watch Now</a>
                         <a href="https://youtu.be/lVtetOjX_vk" class="watch-now-btn">Trailer</a>
@@ -862,6 +926,10 @@
                             <span>2015</span>
                             <span>1h 35m</span>
                             <span>Animation</span>
+                            <button class="add-to-list-btn" onclick="toggleMyList(movieId)">
+                                <span class="add-text">+ My List</span>
+                                <span class="remove-text">✓ Added</span>
+                            </button>
                         </div>
                         <a href="inside-out.html" class="watch-now-btn">Watch Now</a>
                     </div>
@@ -984,6 +1052,52 @@
                     }, 300);
                 });
             }
+        });
+
+        //List
+
+        const myList = JSON.parse(localStorage.getItem('myList')) || [];
+
+        function toggleMyList(movieId) {
+            const index = myList.indexOf(movieId);
+            const btn = document.querySelector(`#movieModal${movieId} .add-to-list-btn`);
+            
+            if (index === -1) {
+                // Add to list
+                myList.push(movieId);
+                btn.classList.add('added');
+            } else {
+                // Remove from list
+                myList.splice(index, 1);
+                btn.classList.remove('added');
+            }
+            
+            localStorage.setItem('myList', JSON.stringify(myList));
+            updateMyListSection();
+        }
+
+        function updateMyListSection() {
+            const myListRow = document.getElementById('my-list-row');
+            myListRow.innerHTML = '';
+            
+            myList.forEach(movieId => {
+                const originalCard = document.querySelector(`[data-movie-id="${movieId}"]`);
+                if (originalCard) {
+                    const clone = originalCard.cloneNode(true);
+                    myListRow.appendChild(clone);
+                }
+            });
+        }
+
+        // Initialize My List on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            updateMyListSection();
+            
+            // Update "Add to List" buttons state
+            myList.forEach(movieId => {
+                const btn = document.querySelector(`#movieModal${movieId} .add-to-list-btn`);
+                if (btn) btn.classList.add('added');
+            });
         });
     </script>
 </body>
