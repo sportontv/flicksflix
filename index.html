@@ -420,11 +420,11 @@
     <section class="movie-section" id="my-list">
         <h2>My List</h2>
         <div class="movie-row-container">
-            <button class="scroll-button prev hidden">❮</button>
+            <button class="scroll-button prev" style="display: block;">❮</button>
             <div class="movie-row" id="my-list-row">
                 <!-- Movies will be added here dynamically -->
             </div>
-            <button class="scroll-button next">❯</button>
+            <button class="scroll-button next" style="display: block;">❯</button>
         </div>
     </section>
 
@@ -1104,6 +1104,51 @@
                     myListRow.appendChild(clone);
                 }
             });
+
+            // Show/hide scroll buttons based on content
+            const container = document.querySelector('#my-list .movie-row-container');
+            const row = myListRow;
+            const prevBtn = container.querySelector('.scroll-button.prev');
+            const nextBtn = container.querySelector('.scroll-button.next');
+            
+            // Reset scroll position
+            let scrollPosition = 0;
+            row.style.transform = 'translateX(0)';
+
+            // Show/hide buttons based on content width
+            const hasOverflow = row.scrollWidth > container.clientWidth;
+            prevBtn.style.display = hasOverflow ? 'block' : 'none';
+            nextBtn.style.display = hasOverflow ? 'block' : 'none';
+
+            // Clear previous event listeners
+            prevBtn.replaceWith(prevBtn.cloneNode(true));
+            nextBtn.replaceWith(nextBtn.cloneNode(true));
+
+            // Get fresh references after replacing elements
+            const newPrevBtn = container.querySelector('.scroll-button.prev');
+            const newNextBtn = container.querySelector('.scroll-button.next');
+
+            // Add new event listeners
+            newNextBtn.addEventListener('click', () => {
+                const maxScroll = row.scrollWidth - container.clientWidth;
+                scrollPosition = Math.min(scrollPosition + 1000, maxScroll);
+                row.style.transform = `translateX(-${scrollPosition}px)`;
+                updateButtons();
+            });
+
+            newPrevBtn.addEventListener('click', () => {
+                scrollPosition = Math.max(scrollPosition - 1000, 0);
+                row.style.transform = `translateX(-${scrollPosition}px)`;
+                updateButtons();
+            });
+
+            function updateButtons() {
+                newPrevBtn.classList.toggle('hidden', scrollPosition === 0);
+                const maxScroll = row.scrollWidth - container.clientWidth;
+                newNextBtn.classList.toggle('hidden', scrollPosition >= maxScroll);
+            }
+
+            updateButtons();
         }
 
         // Initialize My List on page load
