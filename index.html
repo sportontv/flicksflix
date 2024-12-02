@@ -695,6 +695,119 @@
                 width: 100%;
             }
         }
+
+        /*4-digit Pins*/
+
+        .lock-icon {
+            margin-left: 5px;
+            font-size: 14px;
+            color: #e50914;
+        }
+
+        .pin-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 30px;
+            border-radius: 8px;
+            z-index: 2002;
+            display: none;
+            width: 300px;
+            text-align: center;
+        }
+
+        .pin-input {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .pin-digit {
+            width: 40px;
+            height: 40px;
+            background: #333;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            font-size: 20px;
+            text-align: center;
+        }
+
+        .pin-message {
+            color: #e50914;
+            margin-top: 10px;
+            font-size: 14px;
+            min-height: 20px;
+        }
+
+        .set-pin-btn {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .set-pin-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .remove-pin-btn {
+            background: #e50914;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .profile-actions {
+            display: none; /* Hide by default */
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .profile[data-editing="true"] .profile-actions {
+            display: flex;
+        }
+
+        .profile-actions button {
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .delete-profile-btn {
+            background: #e50914;
+            color: white;
+            border: none;
+        }
+
+        .set-pin-btn {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+        }
+
+        .set-pin-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .delete-profile-btn:hover {
+            background: #f40612;
+        }
+
+        .lock-icon {
+            margin-left: 5px;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
@@ -719,6 +832,19 @@
         </div>
         <button class="save" onclick="createProfile()">Save</button>
         <button class="cancel" onclick="hideProfileModal()">Cancel</button>
+    </div>
+    
+    <div class="pin-modal" id="pinModal">
+        <h2 id="pinModalTitle">Enter PIN</h2>
+        <div class="pin-input">
+            <input type="password" maxlength="1" class="pin-digit" />
+            <input type="password" maxlength="1" class="pin-digit" />
+            <input type="password" maxlength="1" class="pin-digit" />
+            <input type="password" maxlength="1" class="pin-digit" />
+        </div>
+        <div class="pin-message" id="pinMessage"></div>
+        <button class="set-pin-btn" id="setPinBtn" style="display: none;">Set PIN</button>
+        <button class="remove-pin-btn" id="removePinBtn" style="display: none;">Remove PIN</button>
     </div>    
     
     <header>
@@ -1569,7 +1695,6 @@
         function updateProfilesDisplay() {
             const profiles = JSON.parse(localStorage.getItem('profiles')) || [];
             const container = document.getElementById('profilesContainer');
-            const addProfileBtn = container.querySelector('.add-profile-btn');
             
             // Clear existing profiles
             container.innerHTML = '';
@@ -1578,15 +1703,57 @@
             profiles.forEach(profile => {
                 const profileElement = document.createElement('div');
                 profileElement.className = 'profile';
-                profileElement.onclick = () => selectProfile(profile);
+                profileElement.setAttribute('data-profile-id', profile.id);
+
+                // Attach profile selection only if not editing
+                profileElement.onclick = !isEditingProfiles ? () => selectProfile(profile) : null;
+
+                // Include lock icon in the profile name if PIN is set
                 profileElement.innerHTML = `
                     <img class="profile-avatar" src="${profile.avatar}" alt="${profile.name}">
-                    <span class="profile-name">${profile.name}</span>
+                    <span class="profile-name">
+                        ${profile.name}
+                        ${profile.pin ? '<span class="lock-icon">🔒</span>' : ''}
+                    </span>
                 `;
+
+                // If in edit mode, add the action buttons
+                if (isEditingProfiles) {
+                    const actionButtons = document.createElement('div');
+                    actionButtons.className = 'profile-actions';
+                    actionButtons.innerHTML = `
+                        <button class="set-pin-btn">${profile.pin ? 'Remove PIN' : 'Set PIN'}</button>
+                        <button class="delete-profile-btn">Delete</button>
+                    `;
+
+                    // Add event listeners for the buttons
+                    const pinBtn = actionButtons.querySelector('.set-pin-btn');
+                    const deleteBtn = actionButtons.querySelector('.delete-profile-btn');
+
+                    pinBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        showPinModal(profile.pin ? 'remove' : 'set', profile.id);
+                    };
+
+                    deleteBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        deleteProfile(profile.id);
+                    };
+
+                    profileElement.appendChild(actionButtons);
+                }
+
                 container.appendChild(profileElement);
             });
-            
+
             // Add the "Add Profile" button back
+            const addProfileBtn = document.createElement('div');
+            addProfileBtn.className = 'add-profile-btn';
+            addProfileBtn.onclick = showProfileModal;
+            addProfileBtn.innerHTML = `
+                <div class="add-profile-icon">+</div>
+                <span class="profile-name">Add Profile</span>
+            `;
             container.appendChild(addProfileBtn);
         }
 
@@ -1782,47 +1949,6 @@
             }
         }
 
-        function enableProfileEditing() {
-            const profiles = JSON.parse(localStorage.getItem('profiles')) || [];
-            const container = document.getElementById('profilesContainer');
-
-            profiles.forEach(profile => {
-                const profileElement = container.querySelector(`[data-profile-id="${profile.id}"]`);
-                if (profileElement) {
-                    // Remove any existing delete buttons to prevent duplicates
-                    const existingDeleteBtn = profileElement.querySelector('.delete-profile-btn');
-                    if (existingDeleteBtn) existingDeleteBtn.remove();
-
-                    // Add a new delete button
-                    const deleteBtn = document.createElement('button');
-                    deleteBtn.className = 'delete-profile-btn';
-                    deleteBtn.textContent = 'Delete';
-
-                    // Prevent selecting the profile when clicking delete
-                    deleteBtn.onclick = (event) => {
-                        event.stopPropagation();
-                        deleteProfile(profile.id);
-                    };
-
-                    profileElement.appendChild(deleteBtn);
-                }
-            });
-        }
-
-        function disableProfileEditing() {
-            const deleteButtons = document.querySelectorAll('.delete-profile-btn');
-            deleteButtons.forEach(btn => btn.remove());
-
-            // Reattach profile selection handlers
-            const profiles = JSON.parse(localStorage.getItem('profiles')) || [];
-            profiles.forEach(profile => {
-                const profileElement = document.querySelector(`[data-profile-id="${profile.id}"]`);
-                if (profileElement) {
-                    profileElement.onclick = () => selectProfile(profile);
-                }
-            });
-        }
-
         function deleteProfile(profileId) {
             let profiles = JSON.parse(localStorage.getItem('profiles')) || [];
             profiles = profiles.filter(profile => profile.id !== profileId);
@@ -1830,41 +1956,225 @@
             updateProfilesDisplay();
         }
 
-        function updateProfilesDisplay() {
+        function enableProfileEditing() {
             const profiles = JSON.parse(localStorage.getItem('profiles')) || [];
             const container = document.getElementById('profilesContainer');
-            const addProfileBtn = container.querySelector('.add-profile-btn');
             
-            // Clear existing profiles
             container.innerHTML = '';
-
-            // Add profiles
+            
             profiles.forEach(profile => {
                 const profileElement = document.createElement('div');
                 profileElement.className = 'profile';
                 profileElement.setAttribute('data-profile-id', profile.id);
+                profileElement.setAttribute('data-editing', 'true');
+                
+                profileElement.innerHTML = `
+                    <img class="profile-avatar" src="${profile.avatar}" alt="${profile.name}">
+                    <span class="profile-name">
+                        ${profile.name}
+                        ${profile.pin ? '<span class="lock-icon">🔒</span>' : ''}
+                    </span>
+                    <div class="profile-actions">
+                        <button class="set-pin-btn">${profile.pin ? 'Remove PIN' : 'Set PIN'}</button>
+                        <button class="delete-profile-btn">Delete</button>
+                    </div>
+                `;
 
-                // Attach profile selection only if not editing
+                const pinBtn = profileElement.querySelector('.set-pin-btn');
+                const deleteBtn = profileElement.querySelector('.delete-profile-btn');
+
+                pinBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    showPinModal(profile.pin ? 'remove' : 'set', profile.id);
+                };
+
+                deleteBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    deleteProfile(profile.id);
+                };
+
+                container.appendChild(profileElement);
+            });
+
+            // Add the "Add Profile" button
+            const addProfileBtn = document.createElement('div');
+            addProfileBtn.className = 'add-profile-btn';
+            addProfileBtn.onclick = showProfileModal;
+            addProfileBtn.innerHTML = `
+                <div class="add-profile-icon">+</div>
+                <span class="profile-name">Add Profile</span>
+            `;
+            container.appendChild(addProfileBtn);
+        }
+
+        function disableProfileEditing() {
+            updateProfilesDisplay();
+        }
+
+        function updateProfilesDisplay() {
+            const profiles = JSON.parse(localStorage.getItem('profiles')) || [];
+            const container = document.getElementById('profilesContainer');
+            
+            container.innerHTML = '';
+            
+            profiles.forEach(profile => {
+                const profileElement = document.createElement('div');
+                profileElement.className = 'profile';
+                profileElement.setAttribute('data-profile-id', profile.id);
                 profileElement.onclick = !isEditingProfiles ? () => selectProfile(profile) : null;
 
                 profileElement.innerHTML = `
                     <img class="profile-avatar" src="${profile.avatar}" alt="${profile.name}">
                     <span class="profile-name">${profile.name}</span>
                 `;
+
                 container.appendChild(profileElement);
             });
 
-            // Add the "Add Profile" button back
+            // Add the "Add Profile" button
+            const addProfileBtn = document.createElement('div');
+            addProfileBtn.className = 'add-profile-btn';
+            addProfileBtn.onclick = showProfileModal;
+            addProfileBtn.innerHTML = `
+                <div class="add-profile-icon">+</div>
+                <span class="profile-name">Add Profile</span>
+            `;
             container.appendChild(addProfileBtn);
 
-            // Re-enable edit mode if active
-            if (isEditingProfiles) enableProfileEditing();
+            if (isEditingProfiles) {
+                enableProfileEditing();
+            }
+        }
 
-            // Add the "Add Profile" button back
-            container.appendChild(addProfileBtn);
+        // 4-digit Pins
 
-            // Re-enable edit mode if active
-            if (isEditingProfiles) enableProfileEditing();
+        function showPinModal(action, profileId) {
+            const modal = document.getElementById('pinModal');
+            const title = document.getElementById('pinModalTitle');
+            const setPinBtn = document.getElementById('setPinBtn');
+            const removePinBtn = document.getElementById('removePinBtn');
+            const inputs = modal.querySelectorAll('.pin-digit');
+            const message = document.getElementById('pinMessage');
+
+            // Reset the modal
+            inputs.forEach(input => input.value = '');
+            message.textContent = '';
+            setPinBtn.style.display = 'none';
+            removePinBtn.style.display = 'none';
+
+            // Configure modal based on action
+            switch(action) {
+                case 'set':
+                    title.textContent = 'Set PIN';
+                    setPinBtn.style.display = 'block';
+                    setPinBtn.onclick = () => verifyAndSetPin(profileId);
+                    break;
+                case 'verify':
+                    title.textContent = 'Enter PIN';
+                    break;
+                case 'remove':
+                    title.textContent = 'Enter PIN to Remove';
+                    removePinBtn.style.display = 'block';
+                    removePinBtn.onclick = () => verifyAndRemovePin(profileId);
+                    break;
+            }
+
+            modal.style.display = 'block';
+            inputs[0].focus();
+
+            // Set up input handling
+            setupPinInputs(inputs);
+        }
+
+        function setupPinInputs(inputs) {
+            inputs.forEach((input, index) => {
+                input.addEventListener('keyup', (e) => {
+                    if (e.key >= 0 && e.key <= 9) {
+                        if (index < inputs.length - 1) {
+                            inputs[index + 1].focus();
+                        }
+                    } else if (e.key === 'Backspace') {
+                        if (index > 0) {
+                            inputs[index - 1].focus();
+                        }
+                    }
+                });
+            });
+        }
+
+        function getEnteredPin() {
+            const inputs = document.querySelectorAll('.pin-digit');
+            return Array.from(inputs).map(input => input.value).join('');
+        }
+
+        function verifyAndSetPin(profileId) {
+            const pin = getEnteredPin();
+            if (pin.length === 4) {
+                const profiles = JSON.parse(localStorage.getItem('profiles')) || [];
+                const profile = profiles.find(p => p.id === profileId);
+                if (profile) {
+                    profile.pin = pin;
+                    localStorage.setItem('profiles', JSON.stringify(profiles));
+                    document.getElementById('pinModal').style.display = 'none';
+                    updateProfilesDisplay();
+                }
+            } else {
+                document.getElementById('pinMessage').textContent = 'Please enter a 4-digit PIN';
+            }
+        }
+
+        function verifyAndRemovePin(profileId) {
+            const pin = getEnteredPin();
+            const profiles = JSON.parse(localStorage.getItem('profiles')) || [];
+            const profile = profiles.find(p => p.id === profileId);
+            
+            if (profile && profile.pin === pin) {
+                delete profile.pin;
+                localStorage.setItem('profiles', JSON.stringify(profiles));
+                document.getElementById('pinModal').style.display = 'none';
+                updateProfilesDisplay();
+            } else {
+                document.getElementById('pinMessage').textContent = 'Incorrect PIN';
+            }
+        }
+
+        // Modify your selectProfile function to check for PIN
+        function selectProfile(profile) {
+            if (profile.pin) {
+                showPinModal('verify', profile.id);
+                const inputs = document.querySelectorAll('.pin-digit');
+                
+                const handlePinVerification = () => {
+                    const enteredPin = getEnteredPin();
+                    if (enteredPin === profile.pin) {
+                        document.getElementById('pinModal').style.display = 'none';
+                        activateProfile(profile);
+                    } else {
+                        document.getElementById('pinMessage').textContent = 'Incorrect PIN';
+                        inputs.forEach(input => input.value = '');
+                        inputs[0].focus();
+                    }
+                };
+
+                inputs[3].addEventListener('keyup', (e) => {
+                    if (e.key >= 0 && e.key <= 9) {
+                        handlePinVerification();
+                    }
+                });
+            } else {
+                activateProfile(profile);
+            }
+        }
+
+        function activateProfile(profile) {
+            currentProfile = profile;
+            localStorage.setItem('lastProfile', JSON.stringify(profile));
+            document.getElementById('profilesOverlay').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            myList.length = 0;
+            myList.push(...(profile.myList || []));
+            updateMyListSection();
+            syncAddToListButtons();
         }
     </script>
 </body>
