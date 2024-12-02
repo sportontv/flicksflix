@@ -1498,18 +1498,16 @@
             // Get profiles from localStorage or default to an empty array
             let profiles = JSON.parse(localStorage.getItem('profiles')) || [];
 
-            // Remove lastProfile from localStorage
-            localStorage.removeItem('lastProfile');
-
             if (profiles.length === 0) {
-                // If no profiles exist, show the overlay
+                // If no profiles exist, show the overlay and disable scrolling
                 document.getElementById('profilesOverlay').style.display = 'flex';
+                document.body.style.overflow = 'hidden';
             } else {
-                // Display the profiles (e.g., console log or render on screen)
-                console.log(profiles);
+                // If profiles exist, display the profile selection screen and disable scrolling
+                updateProfilesDisplay();
+                document.getElementById('profilesOverlay').style.display = 'flex';
+                document.body.style.overflow = 'hidden';
             }
-
-            updateProfilesDisplay();
         }
 
         function updateProfilesDisplay() {
@@ -1538,11 +1536,12 @@
 
         function showProfileModal() {
             document.getElementById('profileModal').style.display = 'block';
+            document.body.style.overflow = 'hidden'; // Disable scrolling
         }
 
         function hideProfileModal() {
             document.getElementById('profileModal').style.display = 'none';
-            document.getElementById('profileName').value = '';
+            document.body.style.overflow = 'hidden'; // Keep scrolling disabled while profiles screen is active
         }
 
         function createProfile() {
@@ -1565,6 +1564,9 @@
             currentProfile = profile;
             localStorage.setItem('lastProfile', JSON.stringify(profile));
             document.getElementById('profilesOverlay').style.display = 'none';
+
+            // Re-enable scrolling
+            document.body.style.overflow = 'auto';
 
             // Sync the list for the selected profile
             myList.length = 0;
