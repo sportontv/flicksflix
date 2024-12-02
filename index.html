@@ -418,10 +418,25 @@
 
         .profiles-container {
             display: flex;
-            gap: 30px;
-            flex-wrap: wrap;
-            justify-content: center;
-            max-width: 80%;
+            flex-wrap: nowrap; /* Single row of avatars */
+            overflow-x: auto; /* Enable horizontal scrolling */
+            gap: 30px; /* Space between profiles */
+            padding: 10px 20px;
+            max-width: 80%; /* Limit width for better appearance */
+            justify-content: start; /* Align items to the left */
+        }
+
+        .profiles-container::-webkit-scrollbar {
+            height: 8px; /* Adjust scrollbar height */
+        }
+
+        .profiles-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3); /* Subtle scrollbar */
+            border-radius: 4px;
+        }
+
+        .profiles-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5); /* Highlighted on hover */
         }
 
         .profile {
