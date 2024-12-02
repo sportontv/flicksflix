@@ -656,6 +656,45 @@
                 height: 100px;
             }
         }
+
+        @media screen and (max-width: 1366px) {
+            .modal-container {
+                width: 100%;
+                height: 100%;
+                max-width: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                transform: none;
+                border-radius: 0;
+                overflow-y: auto;
+            }
+
+            .modal.active .modal-container {
+                transform: none;
+            }
+
+            .modal-header {
+                height: 40vh; /* Adjust height for smaller screens */
+            }
+
+            .modal-info {
+                grid-template-columns: 150px 1fr; /* Smaller poster width */
+                gap: 20px;
+                padding: 20px;
+            }
+
+            .modal-poster {
+                width: 150px; /* Smaller poster */
+            }
+
+            /* Prevent body scrolling when modal is open */
+            body.modal-open {
+                overflow: hidden;
+                position: fixed;
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1366,11 +1405,11 @@
             const modal = document.getElementById(`movieModal${movieId}`);
             if (modal) {
                 modal.style.display = 'block';
-                document.body.style.overflow = 'hidden';
+                document.body.classList.add('modal-open'); // Add class to disable scrolling
                 modal.offsetHeight; // Force reflow
                 modal.classList.add('active');
 
-                // Sync the "Add to List" button in this modal
+                // Sync the "Add to List" button
                 const addToListBtn = modal.querySelector('.add-to-list-btn');
                 if (addToListBtn) {
                     const isAdded = myList.includes(movieId);
@@ -1386,7 +1425,7 @@
                 modal.classList.remove('active');
                 setTimeout(() => {
                     modal.style.display = 'none';
-                    document.body.style.overflow = 'auto';
+                    document.body.classList.remove('modal-open'); // Remove class to re-enable scrolling
                 }, 300);
             }
         }
