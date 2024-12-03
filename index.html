@@ -2135,7 +2135,9 @@
             if (profile.pin) {
                 showPinModal('verify', profile.id);
                 const inputs = document.querySelectorAll('.pin-digit');
+                const okBtn = document.getElementById('pinOkBtn');
                 
+                // Function to verify PIN
                 const handlePinVerification = () => {
                     const enteredPin = getEnteredPin();
                     if (enteredPin === profile.pin) {
@@ -2148,11 +2150,16 @@
                     }
                 };
 
+                // Automatic verification when all digits are entered
                 inputs[3].addEventListener('keyup', (e) => {
                     if (e.key >= 0 && e.key <= 9) {
                         handlePinVerification();
                     }
                 });
+
+                // Manual verification when OK button is clicked
+                okBtn.onclick = handlePinVerification;
+
             } else {
                 activateProfile(profile);
             }
