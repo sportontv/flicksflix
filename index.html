@@ -808,6 +808,20 @@
             margin-left: 5px;
             font-size: 14px;
         }
+
+        .pin-ok-btn {
+            background: #e50914;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .pin-ok-btn:hover {
+            background: #f40612;
+        }
     </style>
 </head>
 <body>
@@ -843,9 +857,10 @@
             <input type="password" maxlength="1" class="pin-digit" />
         </div>
         <div class="pin-message" id="pinMessage"></div>
+        <button class="pin-ok-btn" id="pinOkBtn">OK</button>
         <button class="set-pin-btn" id="setPinBtn" style="display: none;">Set PIN</button>
         <button class="remove-pin-btn" id="removePinBtn" style="display: none;">Remove PIN</button>
-    </div>    
+    </div>
     
     <header>
         <nav>
@@ -1741,20 +1756,37 @@
         }
 
         function selectProfile(profile) {
-            currentProfile = profile;
-            localStorage.setItem('lastProfile', JSON.stringify(profile));
-            document.getElementById('profilesOverlay').style.display = 'none';
+            if (profile.pin) {
+                showPinModal('verify', profile.id);
+                const inputs = document.querySelectorAll('.pin-digit');
+                const okButton = document.getElementById('pinOkBtn');
+                
+                // Function to verify PIN
+                const verifyPin = () => {
+                    const enteredPin = getEnteredPin();
+                    if (enteredPin === profile.pin) {
+                        document.getElementById('pinModal').style.display = 'none';
+                        activateProfile(profile);
+                    } else {
+                        document.getElementById('pinMessage').textContent = 'Incorrect PIN';
+                        inputs.forEach(input => input.value = '');
+                        inputs[0].focus();
+                    }
+                };
 
-            // Re-enable scrolling
-            document.body.style.overflow = 'auto';
+                // Automatic verification when all digits are entered
+                inputs[3].addEventListener('keyup', (e) => {
+                    if (e.key >= 0 && e.key <= 9) {
+                        verifyPin();
+                    }
+                });
 
-            // Sync the list for the selected profile
-            myList.length = 0;
-            myList.push(...(profile.myList || []));
-            updateMyListSection();
+                // Manual verification when OK button is clicked
+                okButton.onclick = verifyPin;
 
-            // Ensure all buttons reflect the selected profile's list
-            syncAddToListButtons();
+            } else {
+                activateProfile(profile);
+            }
         }
 
         function syncAddToListButtons() {
@@ -2010,6 +2042,7 @@
             const title = document.getElementById('pinModalTitle');
             const setPinBtn = document.getElementById('setPinBtn');
             const removePinBtn = document.getElementById('removePinBtn');
+            const okBtn = document.getElementById('pinOkBtn');
             const inputs = modal.querySelectorAll('.pin-digit');
             const message = document.getElementById('pinMessage');
 
@@ -2018,6 +2051,7 @@
             message.textContent = '';
             setPinBtn.style.display = 'none';
             removePinBtn.style.display = 'none';
+            okBtn.style.display = 'none';
 
             // Configure modal based on action
             switch(action) {
@@ -2028,6 +2062,7 @@
                     break;
                 case 'verify':
                     title.textContent = 'Enter PIN';
+                    okBtn.style.display = 'block'; // Only show OK button for verification
                     break;
                 case 'remove':
                     title.textContent = 'Enter PIN to Remove';
