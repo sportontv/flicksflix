@@ -822,6 +822,52 @@
         .pin-ok-btn:hover {
             background: #f40612;
         }
+
+        /* Mobile Navigation Styles */
+        .burger-menu {
+            display: none;
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        .burger-menu div {
+            width: 25px;
+            height: 3px;
+            background-color: white;
+            margin: 5px 0;
+            transition: 0.4s;
+        }
+
+        @media screen and (max-width: 768px) {
+            .burger-menu {
+                display: block;
+            }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background-color: #141414;
+                padding: 20px;
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links a {
+                margin: 0 !important;
+            }
+
+            nav {
+                justify-content: space-between;
+            }
+        }
     </style>
 </head>
 <body>
@@ -865,11 +911,16 @@
     <header>
         <nav>
             <a href="index.html" class="logo">FlicksFlix</a>
+            <div class="burger-menu" onclick="toggleMenu()">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
             <div class="nav-links">
                 <a href="disney.html">Disney Originals</a>
-                <a href="#coming" style="margin-left: 20px;">Coming Soon</a>
-                <a href="#my-list" style="margin-left: 20px;">My List</a>
-                <a href="contact.html" style="margin-left: 20px;">Contact us</a>
+                <a href="#coming">Coming Soon</a>
+                <a href="#my-list">My List</a>
+                <a href="contact.html">Contact us</a>
             </div>
         </nav>
     </header>
@@ -2231,6 +2282,28 @@
             updateMyListSection();
             syncAddToListButtons();
         }
+
+        function toggleMenu() {
+            const navLinks = document.querySelector('.nav-links');
+            navLinks.classList.toggle('active');
+            
+            // Optional: Animate burger menu
+            const burgerLines = document.querySelectorAll('.burger-menu div');
+            burgerLines[0].style.transform = navLinks.classList.contains('active') ? 
+                'rotate(-45deg) translate(-5px, 6px)' : '';
+            burgerLines[1].style.opacity = navLinks.classList.contains('active') ? '0' : '1';
+            burgerLines[2].style.transform = navLinks.classList.contains('active') ? 
+                'rotate(45deg) translate(-5px, -6px)' : '';
+        }
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            const nav = document.querySelector('nav');
+            const navLinks = document.querySelector('.nav-links');
+            if (!nav.contains(e.target) && navLinks.classList.contains('active')) {
+                toggleMenu();
+            }
+        });
     </script>
 </body>
 </html>
