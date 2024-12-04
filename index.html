@@ -1518,17 +1518,12 @@
                 let scrollPosition = 0;
                 
                 function getScrollDistance() {
-                    // If mobile (screen width <= 768px), scroll by one movie card width plus gap
-                    if (window.innerWidth <= 768) {
-                        const movieCard = row.querySelector('.movie-card');
-                        if (movieCard) {
-                            // Get the movie card width plus the gap (15px)
-                            return movieCard.offsetWidth + 15;
-                        }
-                        return 300; // fallback value
+                    const movieCard = row.querySelector('.movie-card');
+                    if (movieCard) {
+                        // Get the movie card width plus the gap (15px)
+                        return movieCard.offsetWidth + 15;
                     }
-                    // On desktop, keep the current scroll distance
-                    return 1000;
+                    return 300; // fallback value
                 }
 
                 nextBtn.addEventListener('click', () => {
