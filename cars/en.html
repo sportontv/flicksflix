@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FlicksFlix</title>
     <style>
         * {
@@ -12,30 +11,25 @@
             box-sizing: border-box;
         }
 
-        body {
-            background-color: #141414;
-            overflow: hidden;
-            width: 100%;
+        html, body {
             height: 100%;
-            position: fixed;
+            background-color: #141414;
         }
 
         iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
             width: 100%;
             height: 100%;
             border: none;
         }
 
-        /* Mobile-specific adjustments */
         @media screen and (max-width: 768px) {
-            iframe {
-                height: 100dvh; /* dynamic viewport height */
-                /* Fallback for browsers that don't support dvh */
-                height: -webkit-fill-available;
+            html, body {
                 height: 100vh;
+                overflow: hidden;
+            }
+            
+            iframe {
+                height: 90vh; /* Reduce height slightly to ensure controls are visible */
             }
         }
     </style>
