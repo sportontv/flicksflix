@@ -11,124 +11,30 @@
             box-sizing: border-box;
         }
 
-        body {
-            font-family: Arial, sans-serif;
+        html, body {
+            height: 100%;
             background-color: #141414;
-            color: white;
-            padding: 20px;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        h1 {
-            color: #e50914;
-            margin-bottom: 30px;
-            text-align: center;
-        }
-
-        p {
-            margin-bottom: 30px;
-            text-align: center;
-        }
-
-        .season-select {
-            margin-bottom: 30px;
-            text-align: center;
-        }
-
-        select {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #333;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .episodes-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            padding: 20px 0;
-        }
-
-        .episode-card {
-            background-color: #333;
-            border-radius: 8px;
-            overflow: hidden;
-            transition: transform 0.3s ease;
-        }
-
-        .episode-card:hover {
-            transform: scale(1.05);
-        }
-
-        .episode-image {
+        iframe {
             width: 100%;
-            height: 169px;
-            object-fit: cover;
+            height: 100%;
+            border: none;
         }
 
-        .episode-info {
-            padding: 15px;
-        }
-
-        .episode-title {
-            font-size: 18px;
-            margin-bottom: 10px;
-        }
-
-        .episode-description {
-            font-size: 14px;
-            color: #999;
-            margin-bottom: 15px;
-        }
-
-        .watch-button {
-            display: inline-block;
-            background-color: #e50914;
-            color: white;
-            padding: 8px 16px;
-            text-decoration: none;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-
-        .watch-button:hover {
-            background-color: #f40612;
-        }
-
-        @media (max-width: 768px) {
-            .episodes-grid {
-                grid-template-columns: 1fr;
+        @media screen and (max-width: 768px) {
+            html, body {
+                height: 100vh;
+                overflow: hidden;
             }
-
-            .episode-card {
-                max-width: 100%;
-            }
-
-            body {
-                padding: 10px;
+            
+            iframe {
+                height: 90vh; /* Reduce height slightly to ensure controls are visible */
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Select Movie Language</h1>
-        <p>You can request a language by contacting us.</p>
-
-        <div class="episodes-grid" id="season1">
-            <div class="episode-card">
-                <div class="episode-info">
-                    <h3 class="episode-title">English</h3>
-                    <a href="en.html" class="watch-button">Watch Now</a>
-                </div>
-            </div>
-        </div>
+    <iframe allowfullscreen scrolling="no" src="https://moviesapi.club/movie/597"></iframe>
 </body>
 </html>
