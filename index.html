@@ -1047,6 +1047,9 @@
         <div class="movie-row-container">
             <button class="scroll-button prev hidden">❮</button>
             <div class="movie-row" id="live-events">
+                <div class="movie-card" data-movie-id="20" onclick="openModal(20)">
+                    <img src="https://www.thesportsdb.com/images/media/event/thumb/8s18r01708596819.jpg">
+                </div>
             </div>
             <button class="scroll-button next">❯</button>
         </div>
@@ -1561,7 +1564,7 @@
                                 <span class="remove-text">✓ Added</span>
                             </button>
                         </div>
-                        <a href="tv/squid-game" class="watch-now-btn">Watch Now</a>
+                        <a href="tv/squid-game/" class="watch-now-btn">Watch Now</a>
                     </div>
                 </div>
     
@@ -1575,6 +1578,41 @@
                             <p><strong>Director:</strong> Hwang Dong-hyuk</p>
                             <p><strong>Cast:</strong> Wi Ha-jun, Lee Jung-jae, Park Hae-soo, HoYeon, Oh Young-soo, Heo Sung-tae, Kim Joo-ryoung, Anupam Tripathi</p>
                             <p><strong>Genre:</strong> Action & Adventure, Mystery, Drama</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal" id="movieModal20">
+            <div class="modal-background"></div>
+            <div class="modal-container">
+                <button class="close-modal" onclick="closeModal(20)">✕</button>
+                
+                <div class="modal-header" style="background-image: url('https://www.thesportsdb.com/images/media/venue/thumb/jfl6ko1720521642.jpg')">
+                    <div class="modal-header-content">
+                        <h1 class="modal-title">F1: Abu Dhabi Grand Prix</h1>
+                        <div class="movie-meta">
+                            <span>Formula One</span>
+                            <span>2024 Season</span>
+                            <span>Round 24</span>
+                            <button class="add-to-list-btn" onclick="toggleMyList(20)">
+                                <span class="add-text">+ My List</span>
+                                <span class="remove-text">✓ Added</span>
+                            </button>
+                        </div>
+                        <a href="live/f1" class="watch-now-btn">Watch Now</a>
+                    </div>
+                </div>
+    
+                <div class="modal-info">
+                    <img src="https://www.thesportsdb.com/images/media/event/poster/q663h01708597223.jpg" class="modal-poster">
+                    <div class="modal-details">
+                        <p class="movie-info">
+                            Watch the last round of the 2024 season of F1. The final race of the season is taking place today in Abu Dhabi at the Yas Marina Circuit on 17:00 local time.
+                        </p>
+                        <div>
+                            <p><strong>Location:</strong> Yas Marina Circuit</p>
                         </div>
                     </div>
                 </div>
