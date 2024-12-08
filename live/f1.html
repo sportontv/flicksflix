@@ -21,6 +21,17 @@
             height: 100%;
             border: none;
         }
+
+        @media screen and (max-width: 768px) {
+            html, body {
+                height: 100vh;
+                overflow: hidden;
+            }
+            
+            iframe {
+                height: 90vh; /* Reduce height slightly to ensure controls are visible */
+            }
+        }
     </style>
 </head>
 <body>
